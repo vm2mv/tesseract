@@ -657,6 +657,9 @@ void NetworkIO::WriteTimeStep(int t, const TFloat *input) {
   WriteTimeStepPart(t, 0, NumFeatures(), input);
 }
 
+// Workaround for bug in VS 2022 17.10 (disable AVX-instruction "vcmpgeps xmm4,xmm3,xmm10")
+#pragma optimize("", off)
+
 // Writes a single timestep from floats in the range [-1, 1] writing only
 // num_features elements of input to (*this)[t], starting at offset.
 void NetworkIO::WriteTimeStepPart(int t, int offset, int num_features, const TFloat *input) {
@@ -672,6 +675,8 @@ void NetworkIO::WriteTimeStepPart(int t, int offset, int num_features, const TFl
     }
   }
 }
+
+#pragma optimize("", on)
 
 // Maxpools a single time step from src.
 void NetworkIO::MaxpoolTimeStep(int dest_t, const NetworkIO &src, int src_t, int *max_line) {
